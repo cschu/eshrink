@@ -1,11 +1,11 @@
     #!/usr/bin/env python3
 
+import argparse
 import csv
 import gzip
 import hashlib
+import os
 import sys
-
-from collections import Counter
 
 
 class EmapperEncoder:
@@ -37,28 +37,29 @@ class EmapperEncoder:
 
 def main():
 
+    ap = argparse.ArgumentParser()
+    ap.add_argument("input_dir")
+    args = ap.parse_args()
+
+
     encoder = EmapperEncoder()
-    encoder.process_file(sys.argv[1], sys.argv[2])
+    
+    w = os.walk(args.input_dir)
+    try:
+        path, dirs, _ = next(w)
+    except StopIteration:
+        print(f"Invalid input dir: {args.input_dir}")
+        dirs = []
+
+    for i, d in enumerate(dirs):
+        if i > 2:
+            break
+        f = os.path.join(path, d, f"{d}.emapper.annotations.gz")
+        if os.path.isfile(f):
+            print(f)
+            encoder.process_file(f, f"{os.path.basename(f)}.python3.encoded")
+    
     encoder.dump_hashes("hashes.txt")
-
-    # d = {}
-    # c = Counter()
-    # with gzip.open(sys.argv[1], "rt") as _in, open(sys.argv[2] + ".encoded", "wt") as _out1:
-    #     for row in csv.reader(_in, delimiter='\t'):
-    #         if row and row[0] and row[0][0] == "#":
-    #             continue
-    #         annotation = "\t".join(row[4:5] + row[6:])
-    #         encoded = hashlib.sha256((annotation.encode())).hexdigest()
-
-    #         print(*row[:4], row[5], encoded, file=_out1, sep="\t")
-    #         d[encoded] = annotation
-    #         c[encoded] += 1
-
-    # with open(sys.argv[2] + ".hashes", "wt") as _out2:
-    #     for k, v in d.items():
-    #         print(k, c[k], v, file=_out2, sep="\t")
-
-
 
 
 
