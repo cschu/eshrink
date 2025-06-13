@@ -7,6 +7,10 @@ import hashlib
 import os
 import sys
 
+##query seed_ortholog   evalue  score   eggNOG_OGs  max_annot_lvl   COG_category    Description Preferred_name  GOs EC  KEGG_ko KEGG_Pathway    KEGG_Module KEGG_Reaction   KEGG_rclass BRITE   KEGG_TC CAZy    BiGG_Reaction   PFAMs
+##1      2               3       4       5           6               7               8           9               10  11  12      13              14          15              16          17      18      19      20              21
+
+
 
 class EmapperEncoder:
     def __init__(self):
@@ -17,11 +21,18 @@ class EmapperEncoder:
             if row and row[0] and row[0][0] == "#":
                 continue
             annotation = "\t".join(row[4:5] + row[6:])
+            # annotation = "\t".join(row[6:])
             encoded = hashlib.sha256(annotation.encode()).hexdigest()
 
-            self.encoded.setdefault(encoded, [0, annotation])[0] += 1
+            existing_annotation = self.encoded.setdefault(encoded, [0, annotation])
+            if existing_annotation[1] != annotation:
+                raise ValueError("CLASH:\n" + existing_annotation[1] + "\n" + annotation)
+            existing_annotation[0] += 1
+
+            # self.encoded.setdefault(encoded, [0, annotation])[0] += 1
         
             yield row[:4] + [row[5], encoded,]
+            # yield row[:6] + [encoded,]
 
     def process_file(self, fi, fo):
         with gzip.open(fi, "rt") as _in, open(fo, "wt") as _out:
@@ -52,8 +63,6 @@ def main():
         dirs = []
 
     for i, d in enumerate(dirs):
-        if i > 2:
-            break
         f = os.path.join(path, d, f"{d}.emapper.annotations.gz")
         if os.path.isfile(f):
             print(f)
