@@ -21,16 +21,16 @@ class EmapperEncoder:
 
             self.encoded.setdefault(encoded, [0, annotation])[0] += 1
         
-            yield row[:4], row[5], encoded
+            yield row[:4] + [row[5], encoded,]
 
     def process_file(self, fi, fo):
         with gzip.open(fi, "rt") as _in, open(fo, "wt") as _out:
-            print(*("\t".join(item) for item in self.encode(_in)), file=_out, delimiter="\n")
+            print(*("\t".join(item) for item in self.encode(_in)), file=_out, sep="\n")
 
     def dump_hashes(self, fo):
         with open(fo, "wt") as _out:
             for k, v in sorted(self.encoded.items()):
-                print(k, *v, file=_out, delimiter="\t")
+                print(k, *v, file=_out, sep="\t")
 
         
 
