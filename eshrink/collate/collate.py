@@ -54,7 +54,7 @@ def main():
 	args = ap.parse_args()
 
 	try:
-		path, dirs, _ in os.walk(args.input_dir)
+		path, dirs, _ = os.walk(args.input_dir)
 	except StopIteration:
 		print(f"Invalid input dir: {args.input_dir}")
 		dirs = []
