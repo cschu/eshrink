@@ -12,15 +12,15 @@ class EmapperRecord:
 	def __init__(self, fhash, nproteins, fields):
 		self.fhash = fhash
 		self.nsets = 1
-		self.nproteins = nproteins
+		self.nproteins = int(nproteins)
 		self.fields = tuple(fields)
 
-	def update(self, other):
-		if other.fhash == self.fhash:
-			if other.fields != self.fields:
-				raise ValueError(f"Fields do not match: \n{self.fields}\n{other.fields}")
-		self.nsets += other.nsets
-		self.nproteins += other.nproteins
+	def update(self, fhash, nproteins, fields):
+		if fhash == self.fhash:
+			if fields != self.fields:
+				raise ValueError(f"Fields do not match: \n{self.fields}\n{fields}")
+		self.nsets += 1
+		self.nproteins += int(nproteins)
 
 	def tostr(self):
 		return "\t".join((self.fhash, str(self.nsets), str(self.nproteins),) + self.fields)
@@ -33,12 +33,11 @@ class EmapperCollator:
 		for line in stream_file(f):
 			fhash, nproteins, *fields = line.strip().split("\t")
 			
-			new_rec = EmapperRecord(fhash, nproteins, fields)
 			rec = self.records.get(fhash)	
 			if rec is None:
-				self.records[fhash] = new_rec
+				self.records[fhash] = EmapperRecord(fhash, nproteins, fields)
 			else:
-				rec.update(new_rec)
+				rec.update(fhash, nproteins, fields)
 
 	def dump(self, out=sys.stdout):
 		for record in self.records.values():
