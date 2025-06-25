@@ -10,7 +10,7 @@ from ..buffered_reader import stream_file
 class EmapperRecord:
 	def __init__(self, fhash, nproteins, fields):
 		self.fhash = fhash
-		self.nproteins += nproteins
+		self.nproteins = nproteins
 		self.nsets = 1
 		self.fields = fields
 
@@ -30,7 +30,7 @@ class EmapperCollator:
 			fhash, nproteins, *fields = line.strip().split("\t")
 			
 			new_rec = EmapperRecord(fhash, nproteins, fields)
-			rec = self.records.get(fhash)
+			rec = self.records.get(fhash)	
 			if rec is None:
 				self.records[fhash] = new_rec
 			else:
