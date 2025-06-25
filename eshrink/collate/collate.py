@@ -17,7 +17,7 @@ class EmapperRecord:
 
 	def update(self, fhash, nproteins, fields):
 		if fhash == self.fhash:
-			if fields != self.fields:
+			if fields != tuple(self.fields):
 				raise ValueError(f"Fields do not match: \n{self.fields}\n{fields}")
 		self.nsets += 1
 		self.nproteins += int(nproteins)
