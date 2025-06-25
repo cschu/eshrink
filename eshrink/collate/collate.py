@@ -41,7 +41,7 @@ class EmapperCollator:
 				rec.update(new_rec)
 
 	def dump(self, out=sys.stdout):
-		for record in self.values():
+		for record in self.records.values():
 			print(record.tostr(), file=out)
 
 
