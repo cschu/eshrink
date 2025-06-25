@@ -64,8 +64,6 @@ def main():
 	input_path = pathlib.Path(path)
 
 	for i, dir in enumerate(dirs):
-		if i > 10:
-			break
 		f = pathlib.Path(input_path / dir / "hashes.txt")
 		if f.is_file():
 			collator.process_file(f)
