@@ -3,6 +3,7 @@
 import argparse
 import os
 import pathlib
+import sys
 
 from ..buffered_reader import stream_file
 
@@ -10,9 +11,9 @@ from ..buffered_reader import stream_file
 class EmapperRecord:
 	def __init__(self, fhash, nproteins, fields):
 		self.fhash = fhash
-		self.nproteins = nproteins
 		self.nsets = 1
-		self.fields = fields
+		self.nproteins = nproteins
+		self.fields = tuple(fields)
 
 	def update(self, other):
 		if other.fhash == self.fhash:
@@ -20,6 +21,9 @@ class EmapperRecord:
 				raise ValueError(f"Fields do not match: \n{self.fields}\n{other.fields}")
 		self.nsets += other.nsets
 		self.nproteins += other.nproteins
+
+	def tostr(self):
+		return "\t".join((self.fhash, str(self.nsets), str(self.nproteins),) + self.fields)
 
 
 class EmapperCollator:
@@ -35,6 +39,10 @@ class EmapperCollator:
 				self.records[fhash] = new_rec
 			else:
 				rec.update(new_rec)
+
+	def dump(self, out=sys.stdout):
+		for record in self.values():
+			print(record.tostr(), file=out)
 
 
 
@@ -53,10 +61,14 @@ def main():
 
 	collator = EmapperCollator()
 
-	for dir in dirs:
+	for i, dir in enumerate(dirs):
+		if i > 10:
+			break
 		f = pathlib.Path(path / dir / "hashes.txt")
 		if f.is_file():
 			collator.process_file(f)
+
+	collator.dump()
 
 	
 
