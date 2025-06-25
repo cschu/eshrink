@@ -49,6 +49,7 @@ with open(path.join(here, "DESCRIPTION.md"), encoding="utf-8") as description:
 		entry_points={
 			"console_scripts": [
 				"eshrink=eshrink.__main__:main",
+				"ecollate=eshrink.collate.collate:main",
 			],
 		},
 		package_data={},
