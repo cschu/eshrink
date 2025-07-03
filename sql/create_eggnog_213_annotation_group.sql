@@ -1,0 +1,20 @@
+CREATE TABLE eggnog_213_annotation_group (
+	id SERIAL PRIMARY KEY,
+	sha256 VARCHAR(64) UNIQUE NOT NULL,
+	eggnog_ogs TEXT,
+	cog_category TEXT,
+	eggnog_description TEXT,
+	preferred_name TEXT,
+	gos TEXT,
+	ec TEXT,
+	kegg_ko TEXT,
+	kegg_pathway TEXT,
+	kegg_module TEXT,
+	kegg_reaction TEXT,
+	kegg_rclass TEXT,
+	brite TEXT,
+	kegg_tc TEXT,
+	cazy TEXT,
+	bigg_reaction TEXT,
+	pfams TEXT
+);
